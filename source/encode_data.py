@@ -1,16 +1,25 @@
 import pandas as pd
 import streamlit as st
+from logger import logging as log
+from exception import CustomException
+from feature_engine.encoding import OneHotEncoder
 
 
-class EncodeData():
-    def __init__(self, df) -> None:
-        self.df = df
+class EncodeData:
+    log.info('In class EncodeData')
+    def __init__(self, X_train: pd.DataFrame, X_test=None) -> None:
+        self.X_train = X_train
+        self.X_test: pd.DataFrame|None = None
 
-    def handle_missing_data(self):
+    def handle_missing_data(self):...
+
+    def OHE(self) -> pd.DataFrame:
+        log.info("Inside OHE")
         try:
-            if self.df is not None:
-                st.write(self.df.size)
-                st.markdown(f":red[red]")
-            else:
-                st.markdown(f":blue[blue!]")
-        except: st.markdown(f":red[hey!]")
+            ohe = OneHotEncoder(drop_last=True)
+            X_train_enc = ohe.fit_transform(self.X_train)
+            X_test_enc = ohe.transform(self.X_test)
+            return X_train_enc, X_test_enc
+        except CustomException as ce:
+            log.warning(f"{ce}")
+    

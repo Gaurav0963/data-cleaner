@@ -6,28 +6,14 @@ class CleanData:
     log.info("In class CleanData")
     '''This class performs basic cleaning operations which are performed on pandas DataFrame. The changes made are inplace, therefore, can't be reversed.
     Available functionality within the class are:
-    1. Get columns having missing values within the DataFrame
-    2. Impute the columns having missing values
-    3. Rename column
-    4. Drop column(s) 
+    1. Impute the columns having missing values
+    2. Rename column
+    3. Drop column(s) 
     '''
-    def __init__(self, df):
+    def __init__(self, df)->None:
         self.df = df
 
-    def get_columns_with_missing_values(self)->list|None:
-        log.info("INSIDE get_columns_with_missing_values")
-        '''## Returns
-        list|None
-            Returns a list columns having missing values in uploaded csv file.
-        '''
-        if self.df is not None:
-            columns = self.df.columns[self.df.isnull().any()].tolist()
-            log.info(f"Returning column list: {columns}")
-            return columns
-        log.info('DataFrame NOT found!, Returning None')
-        return None
-
-    def fill_missing_values(self, column, method, custom=None):
+    def fill_missing_values(self, column, method, custom=None)->None:
         log.info('INSIDE fill_missing_values')
         '''Imputes column having missing values with chosen method.
         ## Parameters
@@ -35,10 +21,9 @@ class CleanData:
         method : method used for calculation of value needed for imputation.
         custom : (provided by user) custom value a column is to be imputed with.
         ## Returns
-        str & numeric_value | str & None
+        str & numeric_value | str & None\n
         1. Code : returns auto-generated code to the imputation.
-        2. Value : returns value with which missing data is filled with (if applicable) or None.
-        '''
+        2. Value : returns value with which missing data is filled with (if applicable) or None.'''
         try:
             if self.df is not None and column:
                 value = None
@@ -103,14 +88,15 @@ class CleanData:
                 log.warning(f"{e}")
                 pass     
 
-    # This function let's user make dynamic change in DataFrame.
-    def df_on_change(self, df):
+    # This function let's user make dynamic change in DataFrame,
+    # and stores the keys as modified rows in session_state.
+    def df_on_change(self, df)->None:
         state = st.session_state["df_editor"]
         for index, updates in state["edited_rows"].items():
             for key, value in updates.items():
                 self.df.loc[index, key] = value
 
-    def editor(self):
+    def editor(self)->None:
         if "df" not in st.session_state:
             st.session_state["df"] = self.df
         st.data_editor(st.session_state["df"], key="df_editor", on_change=self.df_on_change, args=[self.df])
